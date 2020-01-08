@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">SimpleListApplication</string>
+    <string name="actionbar_back_title">Back</string>
+    <string name="actionbar_refresh_title">Refresh</string>
+    <string name="press_back_again">Press back again to exit</string>
+</resources>
