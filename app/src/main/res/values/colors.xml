@@ -17,4 +17,6 @@
     <color name="red">#e51c20</color>
     <color name="red_light">#f16a6d</color>
 
+    <color name="transparent_black">#46070707</color>
+
 </resources>
