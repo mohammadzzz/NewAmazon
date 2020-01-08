@@ -16,8 +16,8 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
-import dev.mammad.simplelistapplication.Interfaces.OnItemClickListener;
 import dev.mammad.simplelistapplication.R;
+import dev.mammad.simplelistapplication.interfaces.OnItemClickListener;
 import dev.mammad.simplelistapplication.model.Product;
 
 public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ProductViewHolder> {
@@ -63,18 +63,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
             return 0;
         }
         return productList.size();
-    }
-
-    // Clean all elements of the recycler
-    public void clear() {
-        productList.clear();
-        notifyDataSetChanged();
-    }
-
-    // Add a list of items -- change to type used
-    public void addAll(List<Product> list) {
-        productList.addAll(list);
-        notifyDataSetChanged();
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {

@@ -1,4 +1,4 @@
-package dev.mammad.simplelistapplication.Interfaces;
+package dev.mammad.simplelistapplication.interfaces;
 
 import dev.mammad.simplelistapplication.model.Product;
 
