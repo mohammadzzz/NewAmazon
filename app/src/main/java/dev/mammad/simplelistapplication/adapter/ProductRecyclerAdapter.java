@@ -20,12 +20,23 @@ import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.interfaces.OnItemClickListener;
 import dev.mammad.simplelistapplication.model.Product;
 
+
+/**
+ * The adapter for recyclerView inside mainFragment.
+ */
 public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecyclerAdapter.ProductViewHolder> {
 
     private Context context;
     private List<Product> productList;
     private OnItemClickListener listener;
 
+    /**
+     * Instantiates a new Product recycler adapter.
+     *
+     * @param context             the context
+     * @param productList         the product list
+     * @param onItemClickListener the listener for item click
+     */
     public ProductRecyclerAdapter(Context context,
                                   List<Product> productList,
                                   OnItemClickListener onItemClickListener) {
@@ -43,6 +54,12 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
         return new ProductViewHolder(view);
     }
 
+    /**
+     * Sets items view by their position
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
@@ -67,10 +84,24 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
         return productList.size();
     }
 
+    /**
+     * The type Product view holder.
+     */
     class ProductViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * The Product title.
+         */
         TextView productTitle;
+        /**
+         * The Product image.
+         */
         ImageView productImage;
 
+        /**
+         * Instantiates a new Product view holder.
+         *
+         * @param itemView the item view
+         */
         ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);

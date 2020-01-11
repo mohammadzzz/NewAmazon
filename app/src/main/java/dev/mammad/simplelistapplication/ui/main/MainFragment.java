@@ -29,16 +29,57 @@ import dev.mammad.simplelistapplication.component.CategoryBottomDialogFragment;
 import dev.mammad.simplelistapplication.model.Product;
 import dev.mammad.simplelistapplication.ui.detail.DetailFragment;
 
+/**
+ * The Main fragment.
+ * <p>
+ * This fragment contains a recycler view that has all products inside it.
+ * <p>
+ * There is also a FAB that can filter the products by their category
+ */
 public class MainFragment extends BaseFragment {
 
+    /**
+     * The RecyclerView that will show all the products
+     */
     private RecyclerView recyclerView;
+    /**
+     * The list of all Products
+     *
+     * @see Product
+     */
     private List<Product> allProducts = new ArrayList<>();
 
+    /**
+     * The ViewModel that stores everything inside.
+     *
+     * @see ListViewModel
+     */
     private ListViewModel listViewModel;
-    private ProductRecyclerAdapter categoryAdapter;
+
+    /**
+     * The adapter that connects list of products to recyclerView
+     *
+     * @see ProductRecyclerAdapter
+     */
+    private ProductRecyclerAdapter productAdapter;
+
+    /**
+     * The layout that contains the recycler view and refresh its data with swipe down gesture
+     */
     private SwipeRefreshLayout swipeContainer;
+
+    /**
+     * The Bottom sheet dialog that show the categories and can filter products with it
+     *
+     * @see CategoryBottomDialogFragment
+     */
     private CategoryBottomDialogFragment dialog;
 
+    /**
+     * New instance main fragment.
+     *
+     * @return the main fragment
+     */
     public static MainFragment newInstance() {
         return new MainFragment();
     }
@@ -52,6 +93,8 @@ public class MainFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Create an instance of ViewModel which attached to MainActivity lifetime
         listViewModel = ViewModelProviders.of(mainActivity).get(ListViewModel.class);
         initViews();
         setupSwipeContainer();
@@ -59,31 +102,42 @@ public class MainFragment extends BaseFragment {
         getAllProducts();
     }
 
+    /**
+     * Initialize view
+     */
+
     private void initViews() {
         recyclerView = mainView.findViewById(R.id.recycler_view);
         swipeContainer = mainView.findViewById(R.id.swipeContainer);
         FloatingActionButton fab = mainView.findViewById(R.id.fab);
 
+        // shows the dialog to select the category and filter products
         fab.setOnClickListener(v -> {
             dialog = CategoryBottomDialogFragment.newInstance();
             dialog.setOnCategoryClickListener(item -> {
                 allProducts.clear();
                 allProducts.addAll(item.getProducts());
-                categoryAdapter.notifyDataSetChanged();
+                productAdapter.notifyDataSetChanged();
             });
             dialog.show(getChildFragmentManager(), CategoryBottomDialogFragment.TAG);
         });
     }
 
+    /**
+     * Getting all the products from ViewModel
+     *
+     * @see ListViewModel
+     */
     private void getAllProducts() {
         swipeContainer.setRefreshing(true);
         listViewModel.getAllProducts().observe(mainActivity, products -> {
             swipeContainer.setRefreshing(false);
             allProducts.clear();
             allProducts.addAll(products);
-            categoryAdapter.notifyDataSetChanged();
+            productAdapter.notifyDataSetChanged();
         });
 
+        // In case of network error, we show a toast
         listViewModel.getError().observe(mainActivity, s -> {
             if (!s.equals("Success")) {
                 swipeContainer.setRefreshing(false);
@@ -92,23 +146,34 @@ public class MainFragment extends BaseFragment {
         });
     }
 
+    /**
+     * Preparing RecyclerView and sets its adapter
+     *
+     * @see ProductRecyclerAdapter
+     */
     private void prepareRecyclerView() {
         LinearLayoutManager categoryListLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(categoryListLayoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        categoryAdapter = new ProductRecyclerAdapter(getContext(),
+        productAdapter = new ProductRecyclerAdapter(getContext(),
                 this.allProducts,
                 (product, productImage) -> startFragment(DetailFragment.newInstance(
                         product,
                         ViewCompat.getTransitionName(productImage))
                         , productImage));
-        recyclerView.setAdapter(categoryAdapter);
+        recyclerView.setAdapter(productAdapter);
     }
 
     private void setupSwipeContainer() {
         swipeContainer.setOnRefreshListener(this::getAllProducts);
     }
+
+    /**
+     * Returning the fragment id with unique Id
+     *
+     * @return FragmentId
+     */
 
     @Override
     public int getFragmentID() {

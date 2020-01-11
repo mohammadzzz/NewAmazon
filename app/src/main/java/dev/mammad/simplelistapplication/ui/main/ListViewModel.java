@@ -14,12 +14,26 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+/**
+ * The ViewModel that stores categories and products.
+ */
 public class ListViewModel extends ViewModel {
 
     private MutableLiveData<List<Category>> categories = new MutableLiveData<>();
     private MutableLiveData<List<Product>> products = new MutableLiveData<>();
     private MutableLiveData<String> error = new MutableLiveData<>();
 
+    /**
+     * Gets all products.
+     * <p>
+     * Calls an api and stores its response and saves categories and products.
+     * <p>
+     * In network errors, it sets {@link #error} and alerts the view to show correct error
+     *
+     * @return the all products
+     * @see ProductRequest
+     */
     MutableLiveData<List<Product>> getAllProducts() {
         ProductRequest.getProducts(new Callback<List<Category>>() {
             @Override
@@ -50,10 +64,20 @@ public class ListViewModel extends ViewModel {
         return products;
     }
 
+    /**
+     * Gets error.
+     *
+     * @return the error
+     */
     MutableLiveData<String> getError() {
         return error;
     }
 
+    /**
+     * Gets categories.
+     *
+     * @return the categories
+     */
     public MutableLiveData<List<Category>> getCategories() {
 
         return categories;

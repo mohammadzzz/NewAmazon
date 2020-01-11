@@ -19,12 +19,31 @@ import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.component.BaseFragment;
 import dev.mammad.simplelistapplication.model.Product;
 
+/**
+ * The Detail fragment.
+ * <p>
+ * This fragment shows details of a product.
+ */
 public class DetailFragment extends BaseFragment {
-    private Product product;
     private static final String EXTRA_TRANSITION_NAME = "transition_name";
     private static final String EXTRA_PRODUCT_ITEM = "product_item";
+
+    /**
+     * The Product to show
+     */
+    private Product product;
+    /**
+     * The name of the item to animate
+     */
     private String transitionName;
 
+    /**
+     * Creates a new {@link DetailFragment} with the given product and transition name
+     *
+     * @param product        the product
+     * @param transitionName the transition name
+     * @return the detail fragment
+     */
     public static DetailFragment newInstance(Product product, String transitionName) {
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_PRODUCT_ITEM, product);
@@ -37,6 +56,8 @@ public class DetailFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set element transition if the sdk is more than 21
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setSharedElementEnterTransition(TransitionInflater.from(getContext())
                     .inflateTransition(android.R.transition.move));
