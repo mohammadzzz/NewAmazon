@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,15 +20,15 @@ import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.interfaces.OnItemClickListener;
 import dev.mammad.simplelistapplication.model.Product;
 
-public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ProductViewHolder> {
+public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecyclerAdapter.ProductViewHolder> {
 
     private Context context;
     private List<Product> productList;
     private OnItemClickListener listener;
 
-    public CategoryRecyclerAdapter(Context context,
-                                   List<Product> productList,
-                                   OnItemClickListener onItemClickListener) {
+    public ProductRecyclerAdapter(Context context,
+                                  List<Product> productList,
+                                  OnItemClickListener onItemClickListener) {
         this.context = context;
         this.productList = productList;
         this.listener = onItemClickListener;
@@ -48,7 +48,9 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         Product product = productList.get(position);
         holder.productTitle.setText(product.getName());
 
-        holder.parent.setOnClickListener(v -> listener.onClickListener(product));
+        ViewCompat.setTransitionName(holder.productImage, product.getName());
+
+        holder.itemView.setOnClickListener(v -> listener.onClickListener(product, holder.productImage));
 
         Glide.with(context)
                 .load(product.getUrl())
@@ -65,14 +67,12 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         return productList.size();
     }
 
-    public class ProductViewHolder extends RecyclerView.ViewHolder {
-        CardView parent;
+    class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle;
         ImageView productImage;
 
-        public ProductViewHolder(@NonNull View itemView) {
+        ProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            parent = itemView.findViewById(R.id.card_view);
             productImage = itemView.findViewById(R.id.product_image);
             productTitle = itemView.findViewById(R.id.product_title);
         }

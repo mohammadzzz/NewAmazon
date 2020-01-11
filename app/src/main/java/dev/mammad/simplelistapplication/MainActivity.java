@@ -2,11 +2,13 @@ package dev.mammad.simplelistapplication;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,13 +23,19 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleBackToExitPressedOnce = false;
     private TextView appTitle;
 
-    public void startFragment(Fragment fragment) {
+    public void startFragment(Fragment fragment, View sharedElement) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                 R.anim.enter_from_right, R.anim.exit_from_left);
+
+        if (sharedElement != null) {
+            if (ViewCompat.getTransitionName(sharedElement) != null) {
+                transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
+            }
+        }
 
         transaction.replace(R.id.container, fragment, String.valueOf(fragment.getId()));
         transaction.addToBackStack(String.valueOf(fragment.getId()));
@@ -48,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
 
         if (savedInstanceState == null) {
-            startFragment(MainFragment.newInstance());
+            startFragment(MainFragment.newInstance(), null);
         }
     }
 

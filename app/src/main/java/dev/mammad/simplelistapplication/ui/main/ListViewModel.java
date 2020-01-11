@@ -1,5 +1,6 @@
 package dev.mammad.simplelistapplication.ui.main;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -19,10 +20,10 @@ public class ListViewModel extends ViewModel {
     private MutableLiveData<List<Product>> products = new MutableLiveData<>();
     private MutableLiveData<String> error = new MutableLiveData<>();
 
-    public MutableLiveData<List<Product>> getAllProducts() {
+    MutableLiveData<List<Product>> getAllProducts() {
         ProductRequest.getProducts(new Callback<List<Category>>() {
             @Override
-            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+            public void onResponse(@NonNull Call<List<Category>> call, @NonNull Response<List<Category>> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         error.setValue("Success");
@@ -41,7 +42,7 @@ public class ListViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<List<Category>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Category>> call, @NonNull Throwable t) {
                 error.setValue(t.getMessage());
             }
         });
@@ -49,7 +50,7 @@ public class ListViewModel extends ViewModel {
         return products;
     }
 
-    public MutableLiveData<String> getError() {
+    MutableLiveData<String> getError() {
         return error;
     }
 

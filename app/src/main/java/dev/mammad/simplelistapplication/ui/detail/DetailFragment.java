@@ -1,5 +1,6 @@
 package dev.mammad.simplelistapplication.ui.detail;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.transition.TransitionInflater;
 
 import com.bumptech.glide.Glide;
 
@@ -19,16 +21,26 @@ import dev.mammad.simplelistapplication.model.Product;
 
 public class DetailFragment extends BaseFragment {
     private Product product;
-    private ImageView image;
-    private TextView name, price;
+    private static final String EXTRA_TRANSITION_NAME = "transition_name";
+    private static final String EXTRA_PRODUCT_ITEM = "product_item";
+    private String transitionName;
 
-    public static DetailFragment newInstance(Product product) {
-
+    public static DetailFragment newInstance(Product product, String transitionName) {
         Bundle args = new Bundle();
-        args.putParcelable("product", product);
+        args.putParcelable(EXTRA_PRODUCT_ITEM, product);
+        args.putString(EXTRA_TRANSITION_NAME, transitionName);
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setSharedElementEnterTransition(TransitionInflater.from(getContext())
+                    .inflateTransition(android.R.transition.move));
+        }
     }
 
     @Nullable
@@ -41,12 +53,18 @@ public class DetailFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
-            product = getArguments().getParcelable("product");
+            transitionName = getArguments().getString(EXTRA_TRANSITION_NAME);
+            product = getArguments().getParcelable(EXTRA_PRODUCT_ITEM);
         }
 
-        image = view.findViewById(R.id.detail_fragment_header_image);
-        name = view.findViewById(R.id.detail_fragment_header_name);
-        price = view.findViewById(R.id.detail_fragment_header_price);
+        ImageView image = view.findViewById(R.id.detail_fragment_header_image);
+        TextView name = view.findViewById(R.id.detail_fragment_header_name);
+        TextView price = view.findViewById(R.id.detail_fragment_header_price);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            image.setTransitionName(transitionName);
+        }
+
         Glide.with(this)
                 .load(product.getUrl())
                 .placeholder(R.drawable.placeholder)

@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,7 +23,7 @@ import java.util.List;
 
 import dev.mammad.simplelistapplication.Consts;
 import dev.mammad.simplelistapplication.R;
-import dev.mammad.simplelistapplication.adapter.CategoryRecyclerAdapter;
+import dev.mammad.simplelistapplication.adapter.ProductRecyclerAdapter;
 import dev.mammad.simplelistapplication.component.BaseFragment;
 import dev.mammad.simplelistapplication.component.CategoryBottomDialogFragment;
 import dev.mammad.simplelistapplication.model.Product;
@@ -32,11 +34,9 @@ public class MainFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private List<Product> allProducts = new ArrayList<>();
 
-    private LinearLayoutManager categoryListLayoutManager;
     private ListViewModel listViewModel;
-    private CategoryRecyclerAdapter categoryAdapter;
+    private ProductRecyclerAdapter categoryAdapter;
     private SwipeRefreshLayout swipeContainer;
-    private FloatingActionButton fab;
     private CategoryBottomDialogFragment dialog;
 
     public static MainFragment newInstance() {
@@ -50,9 +50,9 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listViewModel = ViewModelProviders.of(getActivity()).get(ListViewModel.class);
+        listViewModel = ViewModelProviders.of(mainActivity).get(ListViewModel.class);
         initViews();
         setupSwipeContainer();
         prepareRecyclerView();
@@ -62,7 +62,7 @@ public class MainFragment extends BaseFragment {
     private void initViews() {
         recyclerView = mainView.findViewById(R.id.recycler_view);
         swipeContainer = mainView.findViewById(R.id.swipeContainer);
-        fab = mainView.findViewById(R.id.fab);
+        FloatingActionButton fab = mainView.findViewById(R.id.fab);
 
         fab.setOnClickListener(v -> {
             dialog = CategoryBottomDialogFragment.newInstance();
@@ -77,33 +77,37 @@ public class MainFragment extends BaseFragment {
 
     private void getAllProducts() {
         swipeContainer.setRefreshing(true);
-        listViewModel.getAllProducts().observe(getActivity(), products -> {
+        listViewModel.getAllProducts().observe(mainActivity, products -> {
             swipeContainer.setRefreshing(false);
             allProducts.clear();
             allProducts.addAll(products);
             categoryAdapter.notifyDataSetChanged();
         });
 
-        listViewModel.getError().observe(getActivity(), s -> {
+        listViewModel.getError().observe(mainActivity, s -> {
             if (!s.equals("Success")) {
                 swipeContainer.setRefreshing(false);
+                Toast.makeText(mainActivity, getString(R.string.error_network), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void prepareRecyclerView() {
-        categoryListLayoutManager = new GridLayoutManager(getActivity(), 2);
+        LinearLayoutManager categoryListLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(categoryListLayoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        categoryAdapter = new CategoryRecyclerAdapter(getContext(),
+        categoryAdapter = new ProductRecyclerAdapter(getContext(),
                 this.allProducts,
-                product -> startFragment(DetailFragment.newInstance(product)));
+                (product, productImage) -> startFragment(DetailFragment.newInstance(
+                        product,
+                        ViewCompat.getTransitionName(productImage))
+                        , productImage));
         recyclerView.setAdapter(categoryAdapter);
     }
 
     private void setupSwipeContainer() {
-        swipeContainer.setOnRefreshListener(() -> getAllProducts());
+        swipeContainer.setOnRefreshListener(this::getAllProducts);
     }
 
     @Override

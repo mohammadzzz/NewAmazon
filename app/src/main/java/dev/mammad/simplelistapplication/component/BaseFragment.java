@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import dev.mammad.simplelistapplication.MainActivity;
@@ -14,14 +15,14 @@ public abstract class BaseFragment extends Fragment {
     protected MainActivity mainActivity;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mainView = view;
     }
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mainActivity = (MainActivity) context;
     }
@@ -33,8 +34,8 @@ public abstract class BaseFragment extends Fragment {
         mainActivity.setActionBarTitleAndColor(getFragmentTitle());
     }
 
-    public void startFragment(BaseFragment baseFragment) {
-        mainActivity.startFragment(baseFragment);
+    protected void startFragment(BaseFragment baseFragment, View sharedElement) {
+        mainActivity.startFragment(baseFragment, sharedElement);
     }
 
     public abstract int getFragmentID();
