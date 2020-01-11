@@ -38,8 +38,8 @@ public class ServiceGenerator {
     private static void init() {
         httpClient = new OkHttpClient.Builder();
 
-        httpClient.connectTimeout(50, TimeUnit.SECONDS);
-        httpClient.readTimeout(50, TimeUnit.SECONDS);
+        httpClient.connectTimeout(15, TimeUnit.SECONDS);
+        httpClient.readTimeout(15, TimeUnit.SECONDS);
         httpClient.retryOnConnectionFailure(true);
         OkHttpClient client = httpClient.build();
         retrofit = builder.client(client).build();
