@@ -9,6 +9,7 @@ import retrofit2.Callback;
 import retrofit2.http.GET;
 
 public class ProductRequest {
+
     public static void getProducts(Callback<List<Category>> callback) {
         ProductService productService = ServiceGenerator.createService(ProductService.class);
         Call<List<Category>> getProducts = productService.getProducts();
@@ -16,6 +17,7 @@ public class ProductRequest {
     }
 
     public interface ProductService {
+
         @GET(".")
         Call<List<Category>> getProducts();
     }

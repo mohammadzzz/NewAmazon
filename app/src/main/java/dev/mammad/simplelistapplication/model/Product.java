@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.squareup.moshi.Json;
 
-import dev.mammad.simplelistapplication.Consts;
+import dev.mammad.simplelistapplication.config.Configurations;
 
 public class Product implements Parcelable {
 
@@ -66,7 +66,7 @@ public class Product implements Parcelable {
     }
 
     public String getUrl() {
-        return Consts.BASE_URL + url;
+        return Configurations.getBaseUrl() + url;
     }
 
     public void setUrl(String url) {

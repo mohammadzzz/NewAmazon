@@ -1,0 +1,38 @@
+[
+  {
+    "id": "36802",
+    "name": "Food",
+    "description": "",
+    "products": [
+      {
+        "id": "1",
+        "categoryId": "36802",
+        "name": "Bread",
+        "url": "/Bread.jpg",
+        "description": "",
+        "salePrice": {
+          "amount": "0.81",
+          "currency": "EUR"
+        }
+      }
+    ]
+  },
+  {
+    "id": "36803",
+    "name": "Drink",
+    "description": "",
+    "products": [
+      {
+        "id": "1",
+        "categoryId": "36803",
+        "name": "Cola",
+        "url": "/Cola.jpg",
+        "description": "",
+        "salePrice": {
+          "amount": "0.81",
+          "currency": "EUR"
+        }
+      }
+    ]
+  }
+]

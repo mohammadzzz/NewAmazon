@@ -1,47 +1,61 @@
 package dev.mammad.simplelistapplication.network;
 
-import java.util.concurrent.TimeUnit;
-
-import dev.mammad.simplelistapplication.Consts;
+import dev.mammad.simplelistapplication.config.Configurations;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+/**
+ * A generic service generator responsible for creating and initializing different
+ * Retrofit clients.
+ */
 public class ServiceGenerator {
 
-    private static final String SERVICE_BASE_URL = Consts.BASE_URL;
-    private static Retrofit retrofit;
-    private static OkHttpClient.Builder httpClient;
-    private static ServiceGenerator instance;
-    private static Retrofit.Builder builder =
-            new Retrofit.Builder()
-                    .baseUrl(SERVICE_BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create());
-
-    private ServiceGenerator() {
-        init();
-    }
-
-    public static ServiceGenerator getInstance() {
-
-        if (instance == null) {
-            instance = new ServiceGenerator();
-        }
-        return instance;
-    }
-
+    /**
+     * Given a type token of the target Retrofit service interface, it will create an instance
+     * of that service.
+     *
+     * @param serviceClass The Retrofit service type token.
+     * @param <S>          The service type.
+     * @return Created service.
+     */
     public static <S> S createService(Class<S> serviceClass) {
-        getInstance();
-        return retrofit.create(serviceClass);
+        return ServiceGeneratorHolder.INSTANCE.create(serviceClass);
     }
 
-    private static void init() {
-        httpClient = new OkHttpClient.Builder();
+    /**
+     * A lazy initialization holder class helping us to create the HTTP client and
+     * related Retrofit stuff in a lazy fashion.
+     *
+     * @implNote See Item 83 of Effective Java
+     */
+    private static class ServiceGeneratorHolder {
 
-        httpClient.connectTimeout(15, TimeUnit.SECONDS);
-        httpClient.readTimeout(15, TimeUnit.SECONDS);
-        httpClient.retryOnConnectionFailure(true);
-        OkHttpClient client = httpClient.build();
-        retrofit = builder.client(client).build();
+        /**
+         * Holds the lazy initialized Retrofit.
+         */
+        static Retrofit INSTANCE = initialize();
+
+        private static Retrofit initialize() {
+            OkHttpClient client = getHttpClient();
+
+            return new Retrofit.Builder()
+                    .baseUrl(Configurations.getBaseUrl())
+                    .addConverterFactory(MoshiConverterFactory.create())
+                    .client(client)
+                    .build();
+        }
+
+        private static OkHttpClient getHttpClient() {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+            httpClient.connectTimeout(Configurations.getConnectTimeout(), SECONDS);
+            httpClient.readTimeout(Configurations.getReadTimeout(), SECONDS);
+            httpClient.retryOnConnectionFailure(true);
+
+            return httpClient.build();
+        }
     }
 }

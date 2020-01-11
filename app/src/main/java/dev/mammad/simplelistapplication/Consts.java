@@ -5,10 +5,6 @@ package dev.mammad.simplelistapplication;
  */
 public class Consts {
     /**
-     * The base url of our connection.
-     */
-    public static final String BASE_URL = "http://mobcategories.s3-website-eu-west-1.amazonaws.com";
-    /**
      * The id of main fragment.
      *
      * @see dev.mammad.simplelistapplication.ui.main.MainFragment
