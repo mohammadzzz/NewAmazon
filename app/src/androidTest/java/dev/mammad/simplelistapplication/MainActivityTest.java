@@ -120,19 +120,11 @@ public class MainActivityTest {
 
         sleepUninterruptibly(2, SECONDS);
 
-        onView(withId(R.id.swipeContainer)).check((v, ex) ->
+        onView(withId(R.id.swipe_container)).check((v, ex) ->
                 assertFalse(((SwipeRefreshLayout) v).isRefreshing())
         );
-    }
 
-    @Test
-    public void mainActivity_FaultyResponse_ShouldDisplayNoInternetImage() {
-        stubFor(get("/").willReturn(aResponse().withFault(MALFORMED_RESPONSE_CHUNK)));
-        reloadActivity();
-
-        onView(withId(R.id.swipeContainer)).check((v, ex) ->
-                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
-        );
+        onView(withId(R.id.main_fragment_network_error)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -163,20 +155,14 @@ public class MainActivityTest {
     }
 
     @Test
-    public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
-        whenReturningTwoProducts();
+    public void mainActivity_FaultyResponse_ShouldDisplayNoInternetImage() {
+        stubFor(get("/").willReturn(aResponse().withFault(MALFORMED_RESPONSE_CHUNK)));
+        reloadActivity();
 
-        // At first, it contains two products
-        onView(withId(R.id.recycler_view)).check(matches(hasChildCount(2)));
-
-        // Telling the API to return more on subsequent calls
-        stubFor(get("/").willReturn(aResponse().withBody(SCROLLABLE_RESPONSE).withStatus(200)));
-
-        // Pulling to Refresh
-        onView(withId(R.id.swipeContainer)).perform(swipeDown());
-
-        // Now it contains 4 products within the current scroll
-        onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
+        onView(withId(R.id.swipe_container)).check((v, ex) ->
+                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
+        );
+        onView(withId(R.id.main_fragment_network_error)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -285,5 +271,22 @@ public class MainActivityTest {
     private CharSequence getCategoryTitleOf(RecyclerView view, int position) {
         View item = getViewAtGivenPosition(view, position);
         return ((TextView) item.findViewById(R.id.category_list_item_name)).getText();
+    }
+
+    @Test
+    public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
+        whenReturningTwoProducts();
+
+        // At first, it contains two products
+        onView(withId(R.id.recycler_view)).check(matches(hasChildCount(2)));
+
+        // Telling the API to return more on subsequent calls
+        stubFor(get("/").willReturn(aResponse().withBody(SCROLLABLE_RESPONSE).withStatus(200)));
+
+        // Pulling to Refresh
+        onView(withId(R.id.swipe_container)).perform(swipeDown());
+
+        // Now it contains 4 products within the current scroll
+        onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
     }
 }
