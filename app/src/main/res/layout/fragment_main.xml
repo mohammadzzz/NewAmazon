@@ -9,12 +9,28 @@
         android:id="@+id/main_fragment_network_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/error"
+        android:src="@drawable/error_network"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/main_fragment_empty_list_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/gray_light"
+        android:gravity="center"
+        android:text="@string/error_empty_list"
+        android:textColor="@color/gray_dark"
+        android:textSize="@dimen/font_size_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"

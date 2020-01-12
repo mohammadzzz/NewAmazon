@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +28,9 @@ import dev.mammad.simplelistapplication.component.BaseFragment;
 import dev.mammad.simplelistapplication.component.CategoryBottomDialogFragment;
 import dev.mammad.simplelistapplication.model.Product;
 import dev.mammad.simplelistapplication.ui.detail.DetailFragment;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * The Main fragment.
@@ -79,7 +82,8 @@ public class MainFragment extends BaseFragment {
      * @see CategoryBottomDialogFragment
      */
     private CategoryBottomDialogFragment dialog;
-    private ImageView errorImage;
+    private ImageView networkErrorImage;
+    private TextView emptyListErrorText;
 
     /**
      * New instance main fragment.
@@ -111,13 +115,15 @@ public class MainFragment extends BaseFragment {
     /**
      * Initialize view
      */
-
     private void initViews() {
         recyclerView = mainView.findViewById(R.id.recycler_view);
         swipeContainer = mainView.findViewById(R.id.swipe_container);
-        errorImage = mainView.findViewById(R.id.main_fragment_network_error);
+        networkErrorImage = mainView.findViewById(R.id.main_fragment_network_error);
+        emptyListErrorText = mainView.findViewById(R.id.main_fragment_empty_list_error);
 
-        errorImage.setOnClickListener(v -> getAllProducts());
+        networkErrorImage.setOnClickListener(v -> getAllProducts());
+
+        emptyListErrorText.setOnClickListener(v -> getAllProducts());
 
         FloatingActionButton fab = mainView.findViewById(R.id.fab);
 
@@ -135,38 +141,56 @@ public class MainFragment extends BaseFragment {
 
     /**
      * Getting all the products from ViewModel
+     * <p>
+     * If getting no products at all, we gonna show an empty list error
+     * <p>
+     * If getting a network error, we gonna show the network error
      *
      * @see ListViewModel
      */
     private void getAllProducts() {
         swipeContainer.setRefreshing(true);
         listViewModel.getAllProducts().observe(mainActivity, products -> {
-            swipeContainer.setRefreshing(false);
-            allProducts.clear();
-            allProducts.addAll(products);
-            productAdapter.notifyDataSetChanged();
+            if (products.isEmpty()) {
+                showEmptyListError();
+                swipeContainer.setRefreshing(false);
+                allProducts.clear();
+            } else {
+                showRecyclerView();
+                swipeContainer.setRefreshing(false);
+                allProducts.clear();
+                allProducts.addAll(products);
+                productAdapter.notifyDataSetChanged();
+            }
         });
 
-        // In case of network error, we show a toast
+        // In case of network error_network, we show a toast
         listViewModel.getError().observe(mainActivity, s -> {
             if (!s.equals("Success")) {
                 swipeContainer.setRefreshing(false);
                 showNetworkError();
-                Toast.makeText(mainActivity, getString(R.string.error_network), Toast.LENGTH_SHORT).show();
             } else {
-                hideNetworkError();
+                showRecyclerView();
             }
         });
     }
 
-    private void showNetworkError() {
-        swipeContainer.setVisibility(View.GONE);
-        errorImage.setVisibility(View.VISIBLE);
+    private void showEmptyListError() {
+        swipeContainer.setVisibility(GONE);
+        networkErrorImage.setVisibility(GONE);
+        emptyListErrorText.setVisibility(VISIBLE);
     }
 
-    private void hideNetworkError() {
-        swipeContainer.setVisibility(View.VISIBLE);
-        errorImage.setVisibility(View.GONE);
+    private void showNetworkError() {
+        swipeContainer.setVisibility(GONE);
+        networkErrorImage.setVisibility(VISIBLE);
+        emptyListErrorText.setVisibility(GONE);
+    }
+
+    private void showRecyclerView() {
+        swipeContainer.setVisibility(VISIBLE);
+        networkErrorImage.setVisibility(GONE);
+        emptyListErrorText.setVisibility(GONE);
     }
 
     /**

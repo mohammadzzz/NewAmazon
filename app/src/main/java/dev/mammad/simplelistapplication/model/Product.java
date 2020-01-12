@@ -33,28 +33,12 @@ public class Product implements Parcelable {
     @Json(name = "salePrice")
     private SalePrice salePrice;
 
-    protected Product(Parcel in) {
+    private Product(Parcel in) {
         id = in.readString();
         categoryId = in.readString();
         name = in.readString();
         url = in.readString();
         description = in.readString();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -69,24 +53,8 @@ public class Product implements Parcelable {
         return Configurations.getBaseUrl() + url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public SalePrice getSalePrice() {
         return salePrice;
-    }
-
-    public void setSalePrice(SalePrice salePrice) {
-        this.salePrice = salePrice;
     }
 
     @Override

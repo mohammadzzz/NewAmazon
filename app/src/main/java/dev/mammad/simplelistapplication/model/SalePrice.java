@@ -13,15 +13,7 @@ public class SalePrice {
         return amount;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
     public String getCurrency() {
         return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 }

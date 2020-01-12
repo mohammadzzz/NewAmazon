@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
@@ -41,6 +42,7 @@ import static com.github.tomakehurst.wiremock.http.Fault.MALFORMED_RESPONSE_CHUN
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
 import static java.util.Arrays.copyOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -59,9 +61,9 @@ public class MainActivityTest {
     private static final String TWO_PRODUCTS_RESPONSE = readFile("assets/two-products.json");
 
     /**
-     * An empty JSON response to test a few corner cases.
+     * A sample successful API response with no products and no categories.
      */
-    private static final String EMPTY_RESPONSE = readFile("assets/empty-response.json");
+    private static final String NO_PRODUCTS_RESPONSE = readFile("assets/no-products.json");
 
     /**
      * An extended response to test scroll behavior.
@@ -108,6 +110,16 @@ public class MainActivityTest {
         onView(withId(R.id.swipe_container)).check((v, ex) ->
                 assertFalse(((SwipeRefreshLayout) v).isRefreshing())
         );
+    }
+
+    @Test
+    public void mainActivity_FaultyResponse_ShouldDisplayNoInternetImage() {
+        stubFor(get("/").willReturn(aResponse().withFault(MALFORMED_RESPONSE_CHUNK)));
+        reloadActivity();
+
+        onView(withId(R.id.swipe_container)).check((v, ex) ->
+                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
+        );
 
         onView(withId(R.id.main_fragment_network_error)).check(matches(isDisplayed()));
     }
@@ -137,17 +149,6 @@ public class MainActivityTest {
             assertEquals("Cola", getTitleOf(view, 1));
             assertArrayEquals(placeholder, getImageOf(view, 1));
         });
-    }
-
-    @Test
-    public void mainActivity_FaultyResponse_ShouldDisplayNoInternetImage() {
-        stubFor(get("/").willReturn(aResponse().withFault(MALFORMED_RESPONSE_CHUNK)));
-        reloadActivity();
-
-        onView(withId(R.id.swipe_container)).check((v, ex) ->
-                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
-        );
-        onView(withId(R.id.main_fragment_network_error)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -197,6 +198,28 @@ public class MainActivityTest {
     }
 
     @Test
+    public void ok_WhenGettingEmptyList_ShouldShowEmptyListErrorText() {
+        stubFor(get("/").willReturn(aResponse().withBody(NO_PRODUCTS_RESPONSE).withStatus(200)));
+        reloadActivity();
+        onView(withId(R.id.main_fragment_empty_list_error))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.main_fragment_network_error))
+                .check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void clickingOnBack_ShouldShowFirstFragment() {
+        whenReturningTwoProducts();
+
+        // Clicking on one Product
+        onView(withText("Cola")).perform(click());
+        Espresso.pressBack();
+
+        onView(withId(R.id.recycler_view))
+                .check(matches(isDisplayed()));
+    }
+
+    @Test
     public void clickingOnCategory_WhenThereAreCategories_ShouldFilterOutProducts() {
         whenReturningTwoProducts();
 
@@ -228,11 +251,6 @@ public class MainActivityTest {
         });
     }
 
-    private View getViewAtGivenPosition(RecyclerView recyclerView, int position) {
-        //noinspection ConstantConditions
-        return recyclerView.getLayoutManager().findViewByPosition(position);
-    }
-
     @Test
     public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
         whenReturningTwoProducts();
@@ -248,6 +266,11 @@ public class MainActivityTest {
 
         // Now it contains 4 products within the current scroll
         onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
+    }
+
+    private View getViewAtGivenPosition(RecyclerView recyclerView, int position) {
+        //noinspection ConstantConditions
+        return recyclerView.getLayoutManager().findViewByPosition(position);
     }
 
     private CharSequence getTitleOf(RecyclerView view, int position) {
