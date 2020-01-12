@@ -98,21 +98,6 @@ public class MainActivityTest {
         System.clearProperty("test-profile");
     }
 
-    private static String readFile(String path) {
-        //noinspection ConstantConditions
-        try (InputStream resource = MainActivity.class.getClassLoader().getResourceAsStream(path)) {
-            byte[] buffer = new byte[8192];
-            int read;
-            StringBuilder content = new StringBuilder();
-            while ((read = resource.read(buffer)) != -1) {
-                content.append(new String(copyOf(buffer, read)));
-            }
-            return content.toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to read the file", e);
-        }
-    }
-
     @Test
     public void mainActivity_WhenReadTimesOut_ShouldDisplayNoInternetImage() {
         stubFor(get("/").willReturn(aResponse().withFixedDelay(2000)));
@@ -211,11 +196,6 @@ public class MainActivityTest {
                 });
     }
 
-    private View getViewAtGivenPosition(RecyclerView recyclerView, int position) {
-        //noinspection ConstantConditions
-        return recyclerView.getLayoutManager().findViewByPosition(position);
-    }
-
     @Test
     public void clickingOnCategory_WhenThereAreCategories_ShouldFilterOutProducts() {
         whenReturningTwoProducts();
@@ -248,6 +228,28 @@ public class MainActivityTest {
         });
     }
 
+    private View getViewAtGivenPosition(RecyclerView recyclerView, int position) {
+        //noinspection ConstantConditions
+        return recyclerView.getLayoutManager().findViewByPosition(position);
+    }
+
+    @Test
+    public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
+        whenReturningTwoProducts();
+
+        // At first, it contains two products
+        onView(withId(R.id.recycler_view)).check(matches(hasChildCount(2)));
+
+        // Telling the API to return more on subsequent calls
+        stubFor(get("/").willReturn(aResponse().withBody(SCROLLABLE_RESPONSE).withStatus(200)));
+
+        // Pulling to Refresh
+        onView(withId(R.id.swipe_container)).perform(swipeDown());
+
+        // Now it contains 4 products within the current scroll
+        onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
+    }
+
     private CharSequence getTitleOf(RecyclerView view, int position) {
         View item = getViewAtGivenPosition(view, position);
         return ((TextView) item.findViewById(R.id.product_title)).getText();
@@ -273,20 +275,18 @@ public class MainActivityTest {
         return ((TextView) item.findViewById(R.id.category_list_item_name)).getText();
     }
 
-    @Test
-    public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
-        whenReturningTwoProducts();
-
-        // At first, it contains two products
-        onView(withId(R.id.recycler_view)).check(matches(hasChildCount(2)));
-
-        // Telling the API to return more on subsequent calls
-        stubFor(get("/").willReturn(aResponse().withBody(SCROLLABLE_RESPONSE).withStatus(200)));
-
-        // Pulling to Refresh
-        onView(withId(R.id.swipe_container)).perform(swipeDown());
-
-        // Now it contains 4 products within the current scroll
-        onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
+    private static String readFile(String path) {
+        //noinspection ConstantConditions
+        try (InputStream resource = MainActivity.class.getClassLoader().getResourceAsStream(path)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            StringBuilder content = new StringBuilder();
+            while ((read = resource.read(buffer)) != -1) {
+                content.append(new String(copyOf(buffer, read)));
+            }
+            return content.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read the file", e);
+        }
     }
 }
