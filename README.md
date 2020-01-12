@@ -1,4 +1,5 @@
 Products & Categories
+[![CircleCI](https://img.shields.io/circleci/build/github/mohammadzzz/NewAmazon)](https://circleci.com/gh/mohammadzzz/NewAmazon)
 -----
 A very simple android application to display a list of categories of products. This app enables us to browse products and filter them based on different categories.
 
