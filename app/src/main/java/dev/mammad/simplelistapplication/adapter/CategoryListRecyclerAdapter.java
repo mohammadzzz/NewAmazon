@@ -1,5 +1,6 @@
 package dev.mammad.simplelistapplication.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.component.CategoryBottomDialogFragment;
-import dev.mammad.simplelistapplication.interfaces.OnCategoryClickListener;
 import dev.mammad.simplelistapplication.model.Category;
 
 /**
@@ -40,9 +40,10 @@ public class CategoryListRecyclerAdapter extends RecyclerView.Adapter<CategoryLi
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list_item,
-                parent,
-                false);
+        Context context = parent.getContext();
+        int listItem = R.layout.category_list_item;
+        final View view = LayoutInflater.from(context).inflate(listItem, parent, false);
+
         return new CategoryViewHolder(view);
     }
 
@@ -64,6 +65,7 @@ public class CategoryListRecyclerAdapter extends RecyclerView.Adapter<CategoryLi
         if (categoryList == null || categoryList.isEmpty()) {
             return 0;
         }
+
         return categoryList.size();
     }
 
@@ -71,6 +73,7 @@ public class CategoryListRecyclerAdapter extends RecyclerView.Adapter<CategoryLi
      * The Category view holder.
      */
     class CategoryViewHolder extends RecyclerView.ViewHolder {
+
         /**
          * The name of the category
          */

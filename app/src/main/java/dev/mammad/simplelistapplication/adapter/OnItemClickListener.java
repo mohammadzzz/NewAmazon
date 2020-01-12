@@ -1,4 +1,4 @@
-package dev.mammad.simplelistapplication.interfaces;
+package dev.mammad.simplelistapplication.adapter;
 
 import android.widget.ImageView;
 
@@ -12,7 +12,7 @@ import dev.mammad.simplelistapplication.model.Product;
 public interface OnItemClickListener {
 
     /**
-     * On click listener.
+     * Would be called when user clicks on a particular product.
      *
      * @param product      the selected product
      * @param productImage the product image to create the animation

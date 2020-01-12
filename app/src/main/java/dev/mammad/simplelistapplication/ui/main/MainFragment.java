@@ -165,7 +165,6 @@ public class MainFragment extends BaseFragment {
             }
         });
 
-        // In case of network error_network, we show a toast
         listViewModel.getError().observe(mainActivity, s -> {
             if (!s.equals("Success")) {
                 swipeContainer.setRefreshing(false);

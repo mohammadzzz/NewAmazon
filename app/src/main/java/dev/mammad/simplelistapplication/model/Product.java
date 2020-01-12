@@ -9,10 +9,8 @@ import dev.mammad.simplelistapplication.config.Configurations;
 
 
 /**
- * The Product model.
- * <p>
- * This model holds all Products af a specific category
- * This class also implements Parcelable, so we can pass it to next fragment.
+ * This model holds all Products af a specific category. This class also implements Parcelable,
+ * so we can pass it to next fragment.
  *
  * @see dev.mammad.simplelistapplication.ui.detail.DetailFragment#newInstance(Product, String)
  */
@@ -22,6 +20,7 @@ public class Product implements Parcelable {
      * The constant CREATOR.
      */
     public static final Creator<Product> CREATOR = new Creator<Product>() {
+
         @Override
         public Product createFromParcel(Parcel in) {
             return new Product(in);

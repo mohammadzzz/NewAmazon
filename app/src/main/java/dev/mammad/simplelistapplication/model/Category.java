@@ -5,9 +5,7 @@ import com.squareup.moshi.Json;
 import java.util.List;
 
 /**
- * The Category model.
- * <p>
- * The model that comes from API and holds all categories and products
+ * An entity representing the product categories.
  */
 public class Category {
 
@@ -18,8 +16,7 @@ public class Category {
     private String name;
 
     /**
-     * Each category has their own products.
-     * This property, holds all products inside it.
+     * Collection of products belonging to the current category.
      */
     @Json(name = "products")
     private List<Product> products = null;

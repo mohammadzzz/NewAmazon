@@ -3,8 +3,6 @@ package dev.mammad.simplelistapplication.model;
 import com.squareup.moshi.Json;
 
 /**
- * The Sale price Model.
- * <p>
  * This class has the price of a product with its currency.
  *
  * @see Product#getSalePrice()

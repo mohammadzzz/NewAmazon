@@ -1,15 +1,16 @@
-package dev.mammad.simplelistapplication.interfaces;
+package dev.mammad.simplelistapplication.adapter;
 
 import dev.mammad.simplelistapplication.model.Category;
 
 /**
- * The interface to get the item which clicked in bottom sheet dialog.
+ * Callback interface to get the clicked in bottom sheet dialog.
  *
  * @see dev.mammad.simplelistapplication.ui.main.MainFragment
  */
 public interface OnCategoryClickListener {
+
     /**
-     * On click method which gives the clicked category to show its products.
+     * Would be called when user clicks on a specific category.
      *
      * @param category the selected category
      */

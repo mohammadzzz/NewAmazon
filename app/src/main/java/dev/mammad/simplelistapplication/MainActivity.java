@@ -47,15 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * The TextView that shows page title and is in toolbar
-     *
-     * @see MainActivity#setActionBarTitle(CharSequence)
-     * @see MainFragment#getFragmentTitle()
-     * @see DetailFragment#getFragmentTitle()
-     */
-    private TextView appTitle;
-
-    /**
      * The method that starts a fragment and replaces a fragment with another one with animation.
      * <p>
      * If sharedElement equals to null, there will be no transition for shared element
@@ -76,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (sharedElement != null) {
             if (ViewCompat.getTransitionName(sharedElement) != null) {
+                //noinspection ConstantConditions
                 transaction.addSharedElement(sharedElement, ViewCompat.getTransitionName(sharedElement));
             }
         }
@@ -188,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
      * @param fragmentTitle the fragment title
      */
     public void setActionBarTitle(CharSequence fragmentTitle) {
-        appTitle = toolbar.findViewById(R.id.toolbar_title);
+        TextView appTitle = toolbar.findViewById(R.id.toolbar_title);
         appTitle.setText(fragmentTitle);
         appTitle.setTextColor(getResources().getColor(R.color.white));
     }

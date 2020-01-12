@@ -252,7 +252,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void ok_WhenPullToRefresh_ShouldReFetchTheData() throws InterruptedException {
+    public void ok_WhenPullToRefresh_ShouldReFetchTheData() {
         whenReturningTwoProducts();
 
         // At first, it contains two products

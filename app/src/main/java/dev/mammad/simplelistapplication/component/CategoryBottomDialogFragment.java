@@ -87,6 +87,7 @@ public class CategoryBottomDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //noinspection ConstantConditions
         ListViewModel viewModel = ViewModelProviders.of(getActivity()).get(ListViewModel.class);
         categoryRecyclerView = view.findViewById(R.id.category_list);
         setUpRecyclerView();
@@ -130,6 +131,7 @@ public class CategoryBottomDialogFragment extends BottomSheetDialogFragment {
      * The interface Item click listener.
      */
     public interface CategoryClickListener {
+
         /**
          * On category click.
          *

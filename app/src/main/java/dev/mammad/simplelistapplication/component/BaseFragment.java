@@ -12,7 +12,7 @@ import dev.mammad.simplelistapplication.MainActivity;
 /**
  * The Base fragment.
  * <p>
- * Each Fragment inherit from BaseFragment
+ * Each Fragment inherits from BaseFragment
  *
  * @see dev.mammad.simplelistapplication.ui.detail.DetailFragment
  * @see dev.mammad.simplelistapplication.ui.main.MainFragment
@@ -40,7 +40,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * Sets the {@link #mainActivity} from the activity that contains it
      *
-     * @param context
+     * @param context Activity context.
      */
     @Override
     public void onAttach(@NonNull Context context) {
@@ -74,8 +74,6 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * Gets fragment id.
-     * <p>
-     * Each fragment has its unique id stored at @{@link dev.mammad.simplelistapplication.Consts}
      *
      * @return the fragment id
      * @see #onResume()
@@ -93,5 +91,4 @@ public abstract class BaseFragment extends Fragment {
     public CharSequence getFragmentTitle() {
         return "";
     }
-
 }

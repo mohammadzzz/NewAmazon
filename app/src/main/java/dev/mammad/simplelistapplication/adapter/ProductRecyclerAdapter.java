@@ -17,9 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.List;
 
 import dev.mammad.simplelistapplication.R;
-import dev.mammad.simplelistapplication.interfaces.OnItemClickListener;
 import dev.mammad.simplelistapplication.model.Product;
-
 
 /**
  * The adapter for recyclerView inside mainFragment.
@@ -48,17 +46,18 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item,
-                parent,
-                false);
+        Context context = parent.getContext();
+        int listItem = R.layout.list_item;
+        final View view = LayoutInflater.from(context).inflate(listItem, parent, false);
+
         return new ProductViewHolder(view);
     }
 
     /**
      * Sets items view by their position
      *
-     * @param holder
-     * @param position
+     * @param holder   {@link ProductViewHolder}
+     * @param position The product index in the product list.
      */
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
@@ -70,10 +69,10 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
         holder.itemView.setOnClickListener(v -> listener.onClickListener(product, holder.productImage));
 
         Glide.with(context)
-                .load(product.getUrl())
-                .placeholder(R.drawable.placeholder)
-                .apply(RequestOptions.centerCropTransform())
-                .into(holder.productImage);
+            .load(product.getUrl())
+            .placeholder(R.drawable.placeholder)
+            .apply(RequestOptions.centerCropTransform())
+            .into(holder.productImage);
     }
 
     @Override
@@ -81,6 +80,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
         if (productList == null || productList.isEmpty()) {
             return 0;
         }
+
         return productList.size();
     }
 
@@ -88,10 +88,12 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
      * The Product view holder.
      */
     class ProductViewHolder extends RecyclerView.ViewHolder {
+
         /**
          * The Product title.
          */
         TextView productTitle;
+
         /**
          * The Product image.
          */

@@ -24,6 +24,7 @@ import dev.mammad.simplelistapplication.model.Product;
  * This fragment shows details of a product.
  */
 public class DetailFragment extends BaseFragment {
+
     private static final String EXTRA_TRANSITION_NAME = "transition_name";
     private static final String EXTRA_PRODUCT_ITEM = "product_item";
 
@@ -36,6 +37,7 @@ public class DetailFragment extends BaseFragment {
      * The Product to show
      */
     private Product product;
+
     /**
      * The name of the item to animate
      */
@@ -64,7 +66,7 @@ public class DetailFragment extends BaseFragment {
         // Set element transition if the sdk is more than 21
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setSharedElementEnterTransition(TransitionInflater.from(getContext())
-                    .inflateTransition(android.R.transition.move));
+                .inflateTransition(android.R.transition.move));
         }
     }
 
@@ -91,14 +93,14 @@ public class DetailFragment extends BaseFragment {
         }
 
         Glide.with(this)
-                .load(product.getUrl())
-                .placeholder(R.drawable.placeholder)
-                .fitCenter()
-                .into(image);
+            .load(product.getUrl())
+            .placeholder(R.drawable.placeholder)
+            .fitCenter()
+            .into(image);
 
         name.setText(product.getName());
         price.setText(new StringBuilder().append(product.getSalePrice().getAmount())
-                .append(product.getSalePrice().getCurrency()));
+            .append(product.getSalePrice().getCurrency()));
     }
 
     @Override
