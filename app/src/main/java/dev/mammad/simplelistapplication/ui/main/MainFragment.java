@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -74,6 +75,7 @@ public class MainFragment extends BaseFragment {
      * @see CategoryBottomDialogFragment
      */
     private CategoryBottomDialogFragment dialog;
+    private ImageView errorImage;
 
     /**
      * New instance main fragment.
@@ -108,7 +110,11 @@ public class MainFragment extends BaseFragment {
 
     private void initViews() {
         recyclerView = mainView.findViewById(R.id.recycler_view);
-        swipeContainer = mainView.findViewById(R.id.swipeContainer);
+        swipeContainer = mainView.findViewById(R.id.swipe_container);
+        errorImage = mainView.findViewById(R.id.main_fragment_network_error);
+
+        errorImage.setOnClickListener(v -> getAllProducts());
+
         FloatingActionButton fab = mainView.findViewById(R.id.fab);
 
         // shows the dialog to select the category and filter products
@@ -141,9 +147,22 @@ public class MainFragment extends BaseFragment {
         listViewModel.getError().observe(mainActivity, s -> {
             if (!s.equals("Success")) {
                 swipeContainer.setRefreshing(false);
+                showNetworkError();
                 Toast.makeText(mainActivity, getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            } else {
+                hideNetworkError();
             }
         });
+    }
+
+    private void showNetworkError() {
+        swipeContainer.setVisibility(View.GONE);
+        errorImage.setVisibility(View.VISIBLE);
+    }
+
+    private void hideNetworkError() {
+        swipeContainer.setVisibility(View.VISIBLE);
+        errorImage.setVisibility(View.GONE);
     }
 
     /**
