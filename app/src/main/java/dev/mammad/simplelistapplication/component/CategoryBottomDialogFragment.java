@@ -22,23 +22,53 @@ import dev.mammad.simplelistapplication.adapter.CategoryListRecyclerAdapter;
 import dev.mammad.simplelistapplication.model.Category;
 import dev.mammad.simplelistapplication.ui.main.ListViewModel;
 
+/**
+ * Custom bottom sheet dialog to show all categories.
+ * <p>
+ * By selecting a category, the list in {@link dev.mammad.simplelistapplication.ui.main.MainFragment}
+ * will refresh and shows products of this category
+ */
 public class CategoryBottomDialogFragment extends BottomSheetDialogFragment {
 
     public static final String TAG = "BottomDialog";
 
-    private ItemClickListener mListener;
-    private RecyclerView categoryRecyclerView;
-    private LinearLayoutManager categoryListLayoutManager;
-    private CategoryListRecyclerAdapter categoryAdapter;
-    private List<Category> categoryList = new ArrayList<>();
-    private ListViewModel viewModel;
+    /**
+     * The interface which gives the selected category
+     */
+    private CategoryClickListener categoryClickListener;
 
+    /**
+     * The view which shows all categories
+     */
+    private RecyclerView categoryRecyclerView;
+
+    /**
+     * The adapter of the categories
+     */
+    private CategoryListRecyclerAdapter categoryAdapter;
+
+    /**
+     * The categories that came from api
+     */
+    private List<Category> categories = new ArrayList<>();
+
+    /**
+     * Instantiates new bottom dialog fragment.
+     *
+     * @return the dialog fragment
+     */
     public static CategoryBottomDialogFragment newInstance() {
         return new CategoryBottomDialogFragment();
     }
 
-    public void setOnCategoryClickListener(ItemClickListener mListener) {
-        this.mListener = mListener;
+    /**
+     * Sets the listener for checking the clicks on categories.
+     *
+     * @param mListener the listener
+     * @see dev.mammad.simplelistapplication.ui.main.MainFragment
+     */
+    public void setOnCategoryClickListener(CategoryClickListener mListener) {
+        this.categoryClickListener = mListener;
     }
 
     @Nullable
@@ -48,41 +78,63 @@ public class CategoryBottomDialogFragment extends BottomSheetDialogFragment {
         return inflater.inflate(R.layout.bottom_sheet, container, false);
     }
 
+    /**
+     * When the dialog created, it shows all the categories inside the recyclerView
+     *
+     * @param view               The view of the dialog fragment
+     * @param savedInstanceState The saved state
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(ListViewModel.class);
+        ListViewModel viewModel = ViewModelProviders.of(getActivity()).get(ListViewModel.class);
         categoryRecyclerView = view.findViewById(R.id.category_list);
         setUpRecyclerView();
         viewModel.getCategories().observe(getActivity(), categories -> {
-            categoryList.clear();
-            categoryList.addAll(categories);
+            this.categories.clear();
+            this.categories.addAll(categories);
             categoryAdapter.notifyDataSetChanged();
         });
     }
 
+    /**
+     * The method to prepare the recycler view with layout manager and its adapter
+     * with the given categories.
+     *
+     * @see CategoryListRecyclerAdapter
+     */
     private void setUpRecyclerView() {
-        categoryListLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager categoryListLayoutManager = new LinearLayoutManager(getActivity());
         categoryRecyclerView.setLayoutManager(categoryListLayoutManager);
         categoryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        categoryAdapter = new CategoryListRecyclerAdapter(getContext(),
-                this.categoryList,
+        categoryAdapter = new CategoryListRecyclerAdapter(this.categories,
                 category -> {
-                    mListener.onItemClick(category);
+                    categoryClickListener.onCategoryClick(category);
                     dismiss();
                 });
 
         categoryRecyclerView.setAdapter(categoryAdapter);
     }
 
+    /**
+     * Release the listener to prevent the memory leak
+     */
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        categoryClickListener = null;
     }
 
-    public interface ItemClickListener {
-        void onItemClick(Category item);
+    /**
+     * The interface Item click listener.
+     */
+    public interface CategoryClickListener {
+        /**
+         * On category click.
+         *
+         * @param item the category item
+         */
+        void onCategoryClick(Category item);
     }
 }

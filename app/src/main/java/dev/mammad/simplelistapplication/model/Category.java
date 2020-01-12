@@ -4,33 +4,40 @@ import com.squareup.moshi.Json;
 
 import java.util.List;
 
+/**
+ * The Category model.
+ * <p>
+ * The model that comes from API and holds all categories and products
+ */
 public class Category {
 
-    @Json(name = "id")
-    private String id;
+    /**
+     * The name of each category.
+     */
     @Json(name = "name")
     private String name;
-    @Json(name = "description")
-    private String description;
+
+    /**
+     * Each category has their own products.
+     * This property, holds all products inside it.
+     */
     @Json(name = "products")
     private List<Product> products = null;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Gets the name of each category.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * Gets products of this category.
+     *
+     * @return the products
+     */
     public List<Product> getProducts() {
         return products;
     }

@@ -85,7 +85,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     }
 
     /**
-     * The type Product view holder.
+     * The Product view holder.
      */
     class ProductViewHolder extends RecyclerView.ViewHolder {
         /**

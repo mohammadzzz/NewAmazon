@@ -82,6 +82,7 @@ public class MainFragment extends BaseFragment {
      * @see CategoryBottomDialogFragment
      */
     private CategoryBottomDialogFragment dialog;
+
     private ImageView networkErrorImage;
     private TextView emptyListErrorText;
 
