@@ -173,10 +173,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onCreateActionButtons(int fragmentID) {
         switch (fragmentID) {
-            case Consts.FRAGMENT_MAIN:
+            case MainFragment.FRAGMENT_MAIN_ID:
                 toolbar.setNavigationIcon(null);
                 break;
-            case Consts.FRAGMENT_DETAIL:
+            case DetailFragment.FRAGMENT_DETAIL_ID:
                 toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.back_white));
                 break;
         }

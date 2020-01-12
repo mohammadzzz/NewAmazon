@@ -14,7 +14,6 @@ import androidx.transition.TransitionInflater;
 
 import com.bumptech.glide.Glide;
 
-import dev.mammad.simplelistapplication.Consts;
 import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.component.BaseFragment;
 import dev.mammad.simplelistapplication.model.Product;
@@ -27,6 +26,11 @@ import dev.mammad.simplelistapplication.model.Product;
 public class DetailFragment extends BaseFragment {
     private static final String EXTRA_TRANSITION_NAME = "transition_name";
     private static final String EXTRA_PRODUCT_ITEM = "product_item";
+
+    /**
+     * The id of detail fragment.
+     */
+    public static final int FRAGMENT_DETAIL_ID = 1002;
 
     /**
      * The Product to show
@@ -99,7 +103,7 @@ public class DetailFragment extends BaseFragment {
 
     @Override
     public int getFragmentID() {
-        return Consts.FRAGMENT_DETAIL;
+        return FRAGMENT_DETAIL_ID;
     }
 
     @Override

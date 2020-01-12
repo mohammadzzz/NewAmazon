@@ -22,7 +22,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.mammad.simplelistapplication.Consts;
 import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.adapter.ProductRecyclerAdapter;
 import dev.mammad.simplelistapplication.component.BaseFragment;
@@ -38,6 +37,11 @@ import dev.mammad.simplelistapplication.ui.detail.DetailFragment;
  * There is also a FAB that can filter the products by their category
  */
 public class MainFragment extends BaseFragment {
+
+    /**
+     * The id of main fragment.
+     */
+    public static final int FRAGMENT_MAIN_ID = 1001;
 
     /**
      * The RecyclerView that will show all the products
@@ -196,7 +200,7 @@ public class MainFragment extends BaseFragment {
 
     @Override
     public int getFragmentID() {
-        return Consts.FRAGMENT_MAIN;
+        return FRAGMENT_MAIN_ID;
     }
 
     @Override
