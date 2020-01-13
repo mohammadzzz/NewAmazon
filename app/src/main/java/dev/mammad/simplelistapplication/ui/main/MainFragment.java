@@ -26,6 +26,7 @@ import dev.mammad.simplelistapplication.R;
 import dev.mammad.simplelistapplication.adapter.ProductRecyclerAdapter;
 import dev.mammad.simplelistapplication.component.BaseFragment;
 import dev.mammad.simplelistapplication.component.CategoryBottomDialogFragment;
+import dev.mammad.simplelistapplication.model.Category;
 import dev.mammad.simplelistapplication.model.Product;
 import dev.mammad.simplelistapplication.ui.detail.DetailFragment;
 
@@ -45,6 +46,7 @@ public class MainFragment extends BaseFragment {
      * The id of main fragment.
      */
     public static final int FRAGMENT_MAIN_ID = 1001;
+    private static final String SELECTED_CATEGORY_KEY = "SELECTED_CATEGORY_KEY";
 
     /**
      * The RecyclerView that will show all the products
@@ -85,6 +87,7 @@ public class MainFragment extends BaseFragment {
 
     private ImageView networkErrorImage;
     private TextView emptyListErrorText;
+    private Category selectedCategory = null;
 
     /**
      * New instance main fragment.
@@ -93,6 +96,14 @@ public class MainFragment extends BaseFragment {
      */
     public static MainFragment newInstance() {
         return new MainFragment();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_CATEGORY_KEY)) {
+            selectedCategory = savedInstanceState.getParcelable(SELECTED_CATEGORY_KEY);
+        }
     }
 
     @Nullable
@@ -110,7 +121,17 @@ public class MainFragment extends BaseFragment {
         initViews();
         setupSwipeContainer();
         prepareRecyclerView();
-        getAllProducts();
+        if (selectedCategory == null) {
+            getAllProducts();
+        } else {
+            getAllProducts(selectedCategory);
+        }
+    }
+
+    private void getAllProducts(Category selectedCategory) {
+        allProducts.clear();
+        allProducts.addAll(selectedCategory.getProducts());
+        productAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -132,9 +153,11 @@ public class MainFragment extends BaseFragment {
         fab.setOnClickListener(v -> {
             dialog = CategoryBottomDialogFragment.newInstance();
             dialog.setOnCategoryClickListener(item -> {
+                selectedCategory = item;
                 allProducts.clear();
                 allProducts.addAll(item.getProducts());
                 productAdapter.notifyDataSetChanged();
+                resetFragmentTitle();
             });
             dialog.show(getChildFragmentManager(), CategoryBottomDialogFragment.TAG);
         });
@@ -143,6 +166,8 @@ public class MainFragment extends BaseFragment {
     /**
      * Getting all the products from ViewModel
      * <p>
+     * Resets the title of the fragment
+     * <p>
      * If getting no products at all, we gonna show an empty list error
      * <p>
      * If getting a network error, we gonna show the network error
@@ -150,6 +175,8 @@ public class MainFragment extends BaseFragment {
      * @see ListViewModel
      */
     private void getAllProducts() {
+        selectedCategory = null;
+        resetFragmentTitle();
         swipeContainer.setRefreshing(true);
         listViewModel.getAllProducts().observe(mainActivity, products -> {
             if (products.isEmpty()) {
@@ -173,6 +200,10 @@ public class MainFragment extends BaseFragment {
                 showRecyclerView();
             }
         });
+    }
+
+    private void resetFragmentTitle() {
+        mainActivity.setActionBarTitle(getFragmentTitle());
     }
 
     private void showEmptyListError() {
@@ -204,11 +235,11 @@ public class MainFragment extends BaseFragment {
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         productAdapter = new ProductRecyclerAdapter(getContext(),
-                this.allProducts,
-                (product, productImage) -> startFragment(DetailFragment.newInstance(
-                        product,
-                        ViewCompat.getTransitionName(productImage))
-                        , productImage));
+            this.allProducts,
+            (product, productImage) -> startFragment(DetailFragment.newInstance(
+                product,
+                ViewCompat.getTransitionName(productImage))
+                , productImage));
         recyclerView.setAdapter(productAdapter);
     }
 
@@ -216,12 +247,17 @@ public class MainFragment extends BaseFragment {
         swipeContainer.setOnRefreshListener(this::getAllProducts);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SELECTED_CATEGORY_KEY, selectedCategory);
+    }
+
     /**
      * Returning the fragment id with unique Id
      *
      * @return FragmentId
      */
-
     @Override
     public int getFragmentID() {
         return FRAGMENT_MAIN_ID;
@@ -229,7 +265,8 @@ public class MainFragment extends BaseFragment {
 
     @Override
     public CharSequence getFragmentTitle() {
-        return "Products";
+        return new StringBuilder(getString(R.string.main_fragment_title))
+            .append((selectedCategory != null) ? " (" + selectedCategory.getName() + ")" : "");
     }
 
 }

@@ -108,7 +108,7 @@ public class MainActivityTest {
         sleepUninterruptibly(2, SECONDS);
 
         onView(withId(R.id.swipe_container)).check((v, ex) ->
-                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
+            assertFalse(((SwipeRefreshLayout) v).isRefreshing())
         );
     }
 
@@ -118,7 +118,7 @@ public class MainActivityTest {
         reloadActivity();
 
         onView(withId(R.id.swipe_container)).check((v, ex) ->
-                assertFalse(((SwipeRefreshLayout) v).isRefreshing())
+            assertFalse(((SwipeRefreshLayout) v).isRefreshing())
         );
 
         onView(withId(R.id.main_fragment_network_error)).check(matches(isDisplayed()));
@@ -182,19 +182,19 @@ public class MainActivityTest {
 
         // Clicking on the category fab
         theFab
-                .check(matches(isDisplayed()))
-                .check(matches(isClickable()))
-                .perform(click());
+            .check(matches(isDisplayed()))
+            .check(matches(isClickable()))
+            .perform(click());
 
         // Then category list should contain two items as expected
         onView(withId(R.id.category_list))
-                .check(matches(isDisplayed()))
-                .check((v, ex) -> {
-                    RecyclerView view = (RecyclerView) v;
+            .check(matches(isDisplayed()))
+            .check((v, ex) -> {
+                RecyclerView view = (RecyclerView) v;
 
-                    assertEquals("Food", getCategoryTitleOf(view, 0));
-                    assertEquals("Drink", getCategoryTitleOf(view, 1));
-                });
+                assertEquals("Food", getCategoryTitleOf(view, 0));
+                assertEquals("Drink", getCategoryTitleOf(view, 1));
+            });
     }
 
     @Test
@@ -202,9 +202,9 @@ public class MainActivityTest {
         stubFor(get("/").willReturn(aResponse().withBody(NO_PRODUCTS_RESPONSE).withStatus(200)));
         reloadActivity();
         onView(withId(R.id.main_fragment_empty_list_error))
-                .check(matches(isDisplayed()));
+            .check(matches(isDisplayed()));
         onView(withId(R.id.main_fragment_network_error))
-                .check(matches(not(isDisplayed())));
+            .check(matches(not(isDisplayed())));
     }
 
     @Test
@@ -213,10 +213,13 @@ public class MainActivityTest {
 
         // Clicking on one Product
         onView(withText("Cola")).perform(click());
+
+        // And pressing back to go to main fragment
         Espresso.pressBack();
 
+        // Must show the first fragment
         onView(withId(R.id.recycler_view))
-                .check(matches(isDisplayed()));
+            .check(matches(isDisplayed()));
     }
 
     @Test
@@ -266,6 +269,48 @@ public class MainActivityTest {
 
         // Now it contains 4 products within the current scroll
         onView(withId(R.id.recycler_view)).check(matches(hasMinimumChildCount(4)));
+    }
+
+    @Test
+    public void clickingOnBack_WhenThereIsSelectedCategory_ShouldShowSelectedCategoryProducts() {
+        whenReturningTwoProducts();
+
+        // Clicking on the Fab and then selecting the Drink category
+        onView(withId(R.id.fab)).perform(click());
+        onView(withText("Drink")).perform(click());
+
+        // First, Title should be changed
+        onView(withId(R.id.toolbar_title)).check(matches(withText("Products (Drink)")));
+
+        // And after clicking on one Product
+        onView(withText("Cola")).perform(click());
+
+        // And pressing back to go to main fragment
+        Espresso.pressBack();
+
+        // The title should be unchanged
+        onView(withId(R.id.toolbar_title)).check(matches(withText("Products (Drink)")));
+
+        // And also there must be only one item
+        onView(withId(R.id.recycler_view)).check(matches(hasChildCount(1)));
+    }
+
+    @Test
+    public void ok_WhenPullToRefresh_WhenThereIsSelectedCategory_ShouldResetTheTitleOfTheFragment() {
+        whenReturningTwoProducts();
+
+        // Clicking on the Fab and then selecting the Drink category
+        onView(withId(R.id.fab)).perform(click());
+        onView(withText("Drink")).perform(click());
+
+        // First, Title should be changed
+        onView(withId(R.id.toolbar_title)).check(matches(withText("Products (Drink)")));
+
+        // Pulling to Refresh
+        onView(withId(R.id.swipe_container)).perform(swipeDown());
+
+        // Now, Title should be the default
+        onView(withId(R.id.toolbar_title)).check(matches(withText("Products")));
     }
 
     private View getViewAtGivenPosition(RecyclerView recyclerView, int position) {
